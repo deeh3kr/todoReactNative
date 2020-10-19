@@ -1,9 +1,10 @@
 import { StatusBar } from 'expo-status-bar';
 import React, {useState} from 'react';
-import { StyleSheet, Text, View, Button, TextInput, TouchableOpacity, FlatList } from 'react-native';
+import { StyleSheet, Text, View, Button, TextInput, TouchableWithoutFeedback, Keyboard, FlatList, Alert } from 'react-native';
 import Header from './components/header'
 import TodoItem from './components/todoItem'
 import AddTodo from './components/addTodo'
+import Sandbox from './components/sandbox'
 
 export default function App() {
 
@@ -20,16 +21,29 @@ export default function App() {
   }
 
   const submitHandler = (text) => {
-    setTodos((prevTodos) => {
-      return [
-        {text: text, key: Math.random().toString()},
-        ...prevTodos
-      ];
-    })
+
+    if(text.length <= 3)
+    {
+      Alert.alert('OOPS!', 'more than 3 character!', [{
+        text: 'Understood', onPress: ()=> console.log('alert Closed')}
+      ]);
+    }
+    else{
+      setTodos((prevTodos) => {
+        return [
+          {text: text, key: Math.random().toString()},
+          ...prevTodos
+        ];
+      })
+    }
   }
 
   return (
-    <View style={styles.container}>
+    // <Sandbox />
+    <TouchableWithoutFeedback onPress= {() => {
+      Keyboard.dismiss();
+    }}>
+      <View style={styles.container}>
       <Header />
       <View style={styles.content}>
         <AddTodo submitHandler={submitHandler}/>
@@ -43,6 +57,7 @@ export default function App() {
         </View>
       </View>
     </View>
+    </TouchableWithoutFeedback>
   );
 }
 
@@ -52,9 +67,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   content:{
+    flex: 1,
     padding: 40,
   },
   list:{
+    flex:1,
     marginTop: 20,
   },
   header:{
